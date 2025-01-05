@@ -68,8 +68,6 @@ def download(downlfilename, hwtype, variant):
     with urllib.request.urlopen(hwtype.get_download_path(variant), context=context) as f_in:
         with open(downlfilename, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
-
-    #urllib.request.urlretrieve(hwtype.get_download_path(variant), downlfilename, context=context)
     print("downloaded " + hwtype.get_download_path(variant) + " to " + downlfilename)
    
 def select(descr, l):
