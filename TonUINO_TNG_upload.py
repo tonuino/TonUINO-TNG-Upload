@@ -2,7 +2,10 @@
 
 from enum import Enum
 import tempfile
+import certifi
+import ssl
 import urllib.request
+import shutil
 import subprocess
 import serial.tools.list_ports
 import sys, os
@@ -61,7 +64,12 @@ def upload(downlfilename, hwtype, port):
     subprocess.run([resource_path("avrdude")] + args) 
 
 def download(downlfilename, hwtype, variant):
-    urllib.request.urlretrieve(hwtype.get_download_path(variant), downlfilename)
+    context = ssl.create_default_context(cafile=certifi.where())
+    with urllib.request.urlopen(hwtype.get_download_path(variant), context=context) as f_in:
+        with open(downlfilename, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
+    #urllib.request.urlretrieve(hwtype.get_download_path(variant), downlfilename, context=context)
     print("downloaded " + hwtype.get_download_path(variant) + " to " + downlfilename)
    
 def select(descr, l):
