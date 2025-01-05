@@ -15,14 +15,14 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            BUILD_CMD: pyinstaller -F --add-binary Linux/avrdude:. --add-data Linux/avrdude.conf:. TonUINO_TNG_upload.py
-            OUT_FILE_NAME: TonUINO_TNG_upload
+            BUILD_CMD: pyinstaller -F --add-binary Linux/avrdude:. --add-data Linux/avrdude.conf:. --name TonUINO_TNG_upload_linux TonUINO_TNG_upload.py
+            OUT_FILE_NAME: TonUINO_TNG_upload_linux
           - os: macos-latest
-            BUILD_CMD: pyinstaller -F --add-binary MacOS/avrdude:. --add-data MacOS/avrdude.conf:. TonUINO_TNG_upload.py
-            OUT_FILE_NAME: TonUINO_TNG_upload
+            BUILD_CMD: pyinstaller -F --add-binary MacOS/avrdude:. --add-data MacOS/avrdude.conf:. --name TonUINO_TNG_upload_mac TonUINO_TNG_upload.py
+            OUT_FILE_NAME: TonUINO_TNG_upload_mac
           - os: windows-latest
-            BUILD_CMD: pyinstaller -F --add-binary Windows/avrdude.exe:. --add-data Windows/avrdude.conf:. TonUINO_TNG_upload.py
-            OUT_FILE_NAME: TonUINO_TNG_upload.exe
+            BUILD_CMD: pyinstaller -F --add-binary Windows/avrdude.exe:. --add-data Windows/avrdude.conf:. --name TonUINO_TNG_upload_windows TonUINO_TNG_upload.py
+            OUT_FILE_NAME: TonUINO_TNG_upload_windows.exe
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
