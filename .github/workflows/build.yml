@@ -50,7 +50,7 @@ jobs:
         if: ${{ matrix.POST_BUILD_CMD != '' }}
         run: ${{ matrix.POST_BUILD_CMD }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{runner.os}}
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
