@@ -33,7 +33,7 @@ jobs:
             POST_BUILD_CMD: >
               cd dist/ &&
               ls &&
-              zip -r9 TonUINO_TNG_upload_windows TonUINO_TNG_upload_windows.exe
+              7z a TonUINO_TNG_upload_windows.zip TonUINO_TNG_upload_windows.exe
             OUT_FILE_NAME: TonUINO_TNG_upload_windows.zip
     steps:
       - uses: actions/checkout@v4
