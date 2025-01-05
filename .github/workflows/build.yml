@@ -31,7 +31,7 @@ jobs:
 #            OUT_FILE_NAME: TonUINO_TNG_upload.exe
 #            ASSET_MIME: application/vnd.microsoft.portable-executable
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
