@@ -1,4 +1,15 @@
 # TonUINO-TNG-Upload
 
-Mit dieser Software kannst du die offizielle [TonUINO](https://www.tonuino.de/TNG) Firmware auf deiner HW laden. 
+Mit dieser Software kannst du die offizielle [TonUINO](https://www.tonuino.de/TNG) Firmware auf deine TonUINO Box laden. 
 Einfach in der Konsole starten, es erfolgt dann eine Abfrage vom HW Type und Variante sowie des Com Ports. 
+
+Die Programme können unter folgenden Url heruntergeladen werden: 
+
+Linux: 
+[https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_linux.zip] (https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_linux.zip)
+
+MacOS:
+[https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_mac.zip] (https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_mac.zip)
+
+Windows:
+[https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_windows.zip] (https://boerge1.github.io/TonUINO-TNG-Upload/TonUINO_TNG_upload_windows.zip)
