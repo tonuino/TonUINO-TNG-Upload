@@ -15,7 +15,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            BUILD_CMD: pyinstaller TonUINO_TNG_upload_lin.spec
+            BUILD_CMD: pyinstaller -F --add-binary Linux/avrdude:. --add-data Linux/avrdude.conf:. TonUINO_TNG_upload.py
             OUT_FILE_NAME: TonUINO_TNG_upload
             ASSET_MIME: application/octet-stream
 #          - os: macos-latest
