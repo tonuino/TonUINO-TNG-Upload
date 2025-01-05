@@ -1,0 +1,14 @@
+Nano
+avrdude -patmega328p -carduino -P/dev/ttyUSB0 -b57600 -D -Uflash:w:TonUINO_TNG.hex:i 
+
+Nano Every
+avrdude -patmega4809 -cjtag2updi -P/dev/ttyACM0 -Ufuses:w:0x00,0x54,0x01,0xff,0x00,0b11001001,0x06,0x00,0x00:m -Ulock:w:0xC5:m -Uflash:w:TonUINO_TNG_every.hex:i -r
+
+Nano Every 4808
+avrdude -patmega4808 -cjtag2updi -P/dev/ttyUSB0 -Ufuses:w:0x00,0x54,0x01,0xff,0x00,0b11001001,0x06,0x00,0x00:m -Ulock:w:0xC5:m -Uflash:w:TonUINO_TNG_every_4808.hex:i
+
+AiO
+avrdude -patmega328p -carduino -P/dev/ttyACM0 -b57600 -D -Uflash:w:TonUINO_TNG_AiO.hex:i 
+
+AiO plus
+avrdude -patmega4809 -carduino -P/dev/ttyUSB0 -b115200 -D -Uflash:w:TonUINO_TNG_Aio_plus.hex:i 
