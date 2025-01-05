@@ -49,3 +49,44 @@ jobs:
           name: ${{runner.os}}
           path: ./dist/${{ matrix.OUT_FILE_NAME }}
 
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: create deploy directory
+        run: mkdir deploy
+      
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Linux
+          path: deploy
+      
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macOS
+          path: deploy
+      
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Windows
+          path: deploy
+      
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
