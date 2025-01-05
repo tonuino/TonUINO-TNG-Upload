@@ -4,7 +4,7 @@ from enum import Enum
 import tempfile
 import urllib.request
 import subprocess
-import serial
+import serial.tools.list_ports
 import sys, os
 
 def resource_path(relative_path):
