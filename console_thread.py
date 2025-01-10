@@ -9,7 +9,7 @@ class SerialThread(QThread):
         self.portname, self.baudrate = portname, baudrate
         self.running = True
         self.app = app
-        self.timestamps = app.timestampCheckBox.isChecked()
+        self.timestamps = app.ui.timestampCheckBox.isChecked()
 
     def ser_in(self, s):
         if self.timestamps:
@@ -21,8 +21,6 @@ class SerialThread(QThread):
         self.app.write("Opening %s at %u baud" % (self.portname, self.baudrate))
         try:
             self.ser = serial.Serial(self.portname, self.baudrate, timeout=SER_TIMEOUT)
-            time.sleep(SER_TIMEOUT*1.2)
-            self.ser.flushInput()
         except:
             self.ser = None
         if not self.ser:

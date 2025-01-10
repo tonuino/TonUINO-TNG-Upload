@@ -79,9 +79,18 @@ def download(console, downlfilename, hwtype, variant):
     console.append("downloaded " + hwtype.get_download_path(variant) + " to " + downlfilename)
    
 def download_upload(console, downldir, hwtype,variant, port, process):
-    downlfilename = downldir.name + "/firmware.hex"
+    downlfilename = os.path.join(downldir.name, "firmware.hex")
     
     download(console, downlfilename, hwtype, variant)
     console.append("\n#################################################################################\n")
     upload(console, downlfilename, hwtype, port, process)
    
+def download_sd(console, dirname):
+    url = "https://tonuino.github.io/TonUINO-TNG/sd-card.zip"
+    filename = os.path.join(dirname, "sd-card.zip")
+    context = ssl.create_default_context(cafile=certifi.where())
+    with urllib.request.urlopen(url, context=context) as f_in:
+        with open(filename, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+    console.append("downloaded " + url + " to " + filename)
+
