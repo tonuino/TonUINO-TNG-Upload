@@ -26,7 +26,7 @@ jobs:
             POST_BUILD_CMD: >
               cd dist/ &&
               ls -Rls &&
-              zip -r9 TonUINO_TNG_upload_mac TonUINO_TNG_upload_mac
+              zip -r9 TonUINO_TNG_upload_mac TonUINO_TNG_upload_mac.app
             OUT_FILE_NAME: TonUINO_TNG_upload_mac.zip
           - os: windows-latest
             BUILD_CMD: pyinstaller -F --add-binary Windows/avrdude.exe:. --add-data Windows/avrdude.conf:. --add-data gui.ui:. --noconsole --name TonUINO_TNG_upload_windows TonUINO_TNG_upload.py
