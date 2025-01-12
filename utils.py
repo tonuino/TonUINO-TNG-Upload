@@ -16,13 +16,14 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-VAR        =  ["3"       , "5"       , "3x3"             ]
-VAR_desc   =  ["3 Tasten", "5 Tasten", "3x3 Button Board"]
+VAR        =  ["3"       , "5"       , "3x3"             , "File -->"]
+VAR_desc   =  ["3 Tasten", "5 Tasten", "3x3 Button Board", "File -->"]
 
 class var_type(Enum):
     V3          = 0
     V5          = 1
     V3X3        = 2
+    File        = 3
 
     def get_download_str(self):
         return VAR[self.value]
