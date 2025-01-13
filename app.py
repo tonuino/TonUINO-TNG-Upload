@@ -24,9 +24,14 @@ class App(QDialog):
         self.ui.hwVariantCheckBox.addItems(utils.VAR_desc)
         self.ui.hwVariantCheckBox.setItemData(utils.var_type.File.value, 0, Qt.ItemDataRole.UserRole - 1)
         
+        self.enableHWVariantForHWType(0)
+        self.enableHWTypeForHWVariant(0)
+        
         for port, desc in self.used_ports:
             self.ui.portCheckBox.addItem(port + " - " + desc)
 
+        self.ui.hwTypeCheckBox.currentIndexChanged.connect(self.on_hwTypeCheckBox_changed)
+        self.ui.hwVariantCheckBox.currentIndexChanged.connect(self.on_hwVariantCheckBox_changed)
         self.ui.refreshPortPushButton.clicked.connect(self.on_refreshPortPushButton_clicked)
         self.ui.startPushButton.clicked.connect(self.on_startPushButton_clicked)
         self.ui.downloadSD.clicked.connect(self.on_downloadSDPushButton_clicked)
@@ -44,10 +49,30 @@ class App(QDialog):
         self.process.started.connect(lambda: self.ui.consolePushButton.setEnabled(False))
         self.process.finished.connect(lambda: self.ui.startPushButton.setEnabled(True))
         self.process.finished.connect(lambda: self.ui.consolePushButton.setEnabled(True))
+        self.process.finished.connect(self.on_process_finished)
+        self.process.errorOccurred.connect(self.on_process_errorOccurred)
         
         self.serialThread = None
         
         self.ui.hwTypeCheckBox.setFocus()
+        
+    def enableHWVariantForHWType(self, index):
+        c = utils.compatibility[index]
+        for i in range(len(c)):
+            self.ui.hwVariantCheckBox.setItemData(i, c[i]*33, Qt.ItemDataRole.UserRole - 1)
+
+    def on_hwTypeCheckBox_changed(self, index):
+        self.enableHWVariantForHWType(index)
+
+    def enableHWTypeForHWVariant(self, index):
+        if index == utils.var_type.File.value:
+            return
+        c = [row[index] for row in utils.compatibility]
+        for i in range(len(c)):
+            self.ui.hwTypeCheckBox.setItemData(i, c[i]*33, Qt.ItemDataRole.UserRole - 1)
+
+    def on_hwVariantCheckBox_changed(self, index):
+        self.enableHWTypeForHWVariant(index)
 
     def write(self, text):
         self.console_update.emit(text)
@@ -63,6 +88,17 @@ class App(QDialog):
 
     def process_stdout_ready(self):
         self.append_console(self.process.readAllStandardOutput().data().decode('utf8'))
+
+    def on_process_finished(self, exit_code, exit_status):
+        self.console.append("\n#################################################################################\n")
+        if exit_status == QProcess.ExitStatus.NormalExit and exit_code == 0:
+            self.append_console("\nFinished success")
+        else:
+            self.append_console("\nFinished with error {}".format(exit_code))
+
+    def on_process_errorOccurred(self, error):
+        self.console.append("\n#################################################################################\n")
+        self.append_console("\nFinished with error: {}".format(error))
 
     def closeEvent(self, event):
         if self.serialThread != None:

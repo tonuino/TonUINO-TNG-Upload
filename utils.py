@@ -16,14 +16,15 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-VAR        =  ["3"       , "5"       , "3x3"             , "File -->"]
-VAR_desc   =  ["3 Tasten", "5 Tasten", "3x3 Button Board", "File -->"]
+VAR        =  ["3"       , "5"       , "3x3"             , "5f"                   , "File -->"]
+VAR_desc   =  ["3 Tasten", "5 Tasten", "3x3 Button Board", "5 Tasten alle Feature", "File -->"]
 
 class var_type(Enum):
     V3          = 0
     V5          = 1
     V3X3        = 2
-    File        = 3
+    V5F         = 3
+    File        = 4
 
     def get_download_str(self):
         return VAR[self.value]
@@ -41,6 +42,15 @@ class hw_type(Enum):
 
     def get_download_path(self, variant):
         return "https://tonuino.github.io/TonUINO-TNG/" + HW[self.value] + "_" + variant.get_download_str() + "/firmware.hex"
+
+compatibility = [
+#    3   5   3x3 5f
+    [1,  1,  1,  0], #  NANO      
+    [1,  1,  1,  1], #  EVERY     
+    [1,  1,  1,  1], #  EVERY_4808
+    [1,  1,  1,  0], #  AIO       
+    [1,  1,  1,  1]  #  AIO_PLUS  
+    ]
 
 def get_used_ports():
     ports = serial.tools.list_ports.comports()
