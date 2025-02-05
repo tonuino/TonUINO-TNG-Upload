@@ -29,16 +29,17 @@ class var_type(Enum):
     def get_download_str(self):
         return VAR[self.value]
 
-#              NANO              EVERY             EVERY4808            AIO           AIOPLUS
-HW        =  ["TonUINO_Classic", "TonUINO_Every", "TonUINO_Every4808", "ALLinONE",   "ALLinONE_Plus"]
-HW_des    =  ["TonUINO Classic", "TonUINO Every", "TonUINO Every4808", "ALLinONE",   "ALLinONE Plus"]
+#              NANO               NANO_NEW                          EVERY            EVERY4808            AIO           AIOPLUS
+HW        =  ["TonUINO_Classic", "TonUINO_Classic"               , "TonUINO_Every", "TonUINO_Every4808", "ALLinONE",   "ALLinONE_Plus"]
+HW_des    =  ["TonUINO Classic", "TonUINO Classic new Bootloader", "TonUINO Every", "TonUINO Every4808", "ALLinONE",   "ALLinONE Plus"]
 
 class hw_type(Enum):
     NANO        = 0
-    EVERY       = 1
-    EVERY_4808  = 2
-    AIO         = 3
-    AIO_PLUS    = 4
+    NANO_NEW    = 1
+    EVERY       = 2
+    EVERY_4808  = 3
+    AIO         = 4
+    AIO_PLUS    = 5
 
     def get_download_path(self, variant):
         return "https://tonuino.github.io/TonUINO-TNG/" + HW[self.value] + "_" + variant.get_download_str() + "/firmware.hex"
@@ -46,6 +47,7 @@ class hw_type(Enum):
 compatibility = [
 #    3   5   3x3 5f
     [1,  1,  1,  0], #  NANO      
+    [1,  1,  1,  0], #  NANO_NEW      
     [1,  1,  1,  1], #  EVERY     
     [1,  1,  1,  1], #  EVERY_4808
     [1,  1,  1,  0], #  AIO       
@@ -66,6 +68,8 @@ def upload(console, downlfilename, hwtype, port, process):
     args = []
     if   hwtype == hw_type.NANO:
         args = ["-patmega328p", "-carduino"  , "-P" + port, "-b57600", "-D", "-Uflash:w:" + downlfilename + ":i"]
+    elif hwtype == hw_type.NANO_NEW:
+        args = ["-patmega328p", "-carduino"  , "-P" + port, "-b115200","-D", "-Uflash:w:" + downlfilename + ":i"]
     elif hwtype == hw_type.EVERY:
         args = ["-patmega4809", "-cjtag2updi", "-P" + port                 , "-Uflash:w:" + downlfilename + ":i", "-Ufuses:w:0x00,0x54,0x01,0xff,0x00,0b11001001,0x06,0x00,0x00:m", "-Ulock:w:0xC5:m", "-r"]
     elif hwtype == hw_type.EVERY_4808:
