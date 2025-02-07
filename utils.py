@@ -63,23 +63,56 @@ def get_used_ports():
             used_ports.append((port,desc))
     return used_ports
 
+def calculate_code_size(console, hex_file_path):
+    code_size = 0
+    try:
+        with open(hex_file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith(':'):
+                    data_length = int(line[1:3], 16)
+                    record_type = int(line[7:9], 16)
+                    if record_type == 0x00:
+                        code_size += data_length
+
+    except FileNotFoundError:
+        console.append(f"Die Datei '{hex_file_path}' wurde nicht gefunden.")
+    except Exception as e:
+        console.append(f"Ein Fehler ist aufgetreten: {e}")
+
+    return code_size
+
 
 def upload(console, downlfilename, hwtype, port, process):
+    code_size = calculate_code_size(console, downlfilename)
+    if code_size == 0:
+        return 
+    max_code_size = 0;
     args = []
     if   hwtype == hw_type.NANO:
         args = ["-patmega328p", "-carduino"  , "-P" + port, "-b57600", "-D", "-Uflash:w:" + downlfilename + ":i"]
+        max_code_size = 30720
     elif hwtype == hw_type.NANO_NEW:
         args = ["-patmega328p", "-carduino"  , "-P" + port, "-b115200","-D", "-Uflash:w:" + downlfilename + ":i"]
+        max_code_size = 30720
     elif hwtype == hw_type.EVERY:
         args = ["-patmega4809", "-cjtag2updi", "-P" + port                 , "-Uflash:w:" + downlfilename + ":i", "-Ufuses:w:0x00,0x54,0x01,0xff,0x00,0b11001001,0x06,0x00,0x00:m", "-Ulock:w:0xC5:m", "-r"]
+        max_code_size = 49152
     elif hwtype == hw_type.EVERY_4808:
         args = ["-patmega4808", "-cjtag2updi", "-P" + port                 , "-Uflash:w:" + downlfilename + ":i", "-Ufuses:w:0x00,0x54,0x01,0xff,0x00,0b11001001,0x06,0x00,0x00:m", "-Ulock:w:0xC5:m"]
+        max_code_size = 49152
     elif hwtype == hw_type.AIO:
         args = ["-patmega328p", "-carduino"  , "-P" + port, "-b57600", "-D", "-Uflash:w:" + downlfilename + ":i"]
+        max_code_size = 29696
     elif hwtype == hw_type.AIO_PLUS:
         args = ["-patmega4809", "-carduino"  , "-P" + port, "-b115200","-D", "-Uflash:w:" + downlfilename + ":i"]
+        max_code_size = 48640
     else:
         console.append("Oops")
+        return
+    
+    if code_size > max_code_size:
+        console.append(f"Die Datei '{downlfilename}' (Code Größe {code_size}) ist zu groß für die HW. Die maximale Größe ist {max_code_size}.")
         return
     
     console.append(resource_path("avrdude") + ' ' + ' '.join(args)) 
@@ -108,4 +141,5 @@ def download_sd(console, dirname):
         with open(filename, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
     console.append("downloaded " + url + " to " + filename)
+
 
