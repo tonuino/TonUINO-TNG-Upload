@@ -158,7 +158,7 @@ class App(QDialog):
                 self.ui.portCheckBox.addItem(port + " - " + desc)
 
     def on_localFileLineEdit_changed(self, filename):
-        if filename.endswith(".hex") and QFile(filename).exists():
+        if (filename.endswith(".hex")or filename.endswith(".bin")) and QFile(filename).exists():
             self.ui.hwVariantCheckBox.setItemData(utils.var_type.File.value, 33, Qt.ItemDataRole.UserRole - 1)
             self.ui.hwVariantCheckBox.setCurrentIndex(self.ui.hwVariantCheckBox.count()-1)
         else:
@@ -170,7 +170,7 @@ class App(QDialog):
         self, 
         "Wähle das lokale Firmware File",
         ".",
-        "Fimware (*.hex)",
+        "Fimware (*.hex *.bin)",
         options=QFileDialog.Option.DontUseNativeDialog)
         self.ui.localFileLineEdit.setText(filename[0])
 
