@@ -29,9 +29,9 @@ class var_type(Enum):
     def get_download_str(self):
         return VAR[self.value]
 
-#              NANO               NANO_NEW                          EVERY            EVERY4808            AIO           AIOPLUS
-HW        =  ["TonUINO_Classic", "TonUINO_Classic"               , "TonUINO_Every", "TonUINO_Every4808", "ALLinONE",   "ALLinONE_Plus"]
-HW_des    =  ["TonUINO Classic", "TonUINO Classic new Bootloader", "TonUINO Every", "TonUINO Every4808", "ALLinONE",   "ALLinONE Plus"]
+#              NANO               NANO_NEW                          EVERY            EVERY4808            AIO           AIOPLUS            ESP32_Nano       
+HW        =  ["TonUINO_Classic", "TonUINO_Classic"               , "TonUINO_Every", "TonUINO_Every4808", "ALLinONE",   "ALLinONE_Plus",   "TonUINO_Esp32"]
+HW_des    =  ["TonUINO Classic", "TonUINO Classic new Bootloader", "TonUINO Every", "TonUINO Every4808", "ALLinONE",   "ALLinONE Plus",   "ESP32 Nano"   ]
 
 class hw_type(Enum):
     NANO        = 0
@@ -40,9 +40,14 @@ class hw_type(Enum):
     EVERY_4808  = 3
     AIO         = 4
     AIO_PLUS    = 5
+    ESP32_NANO  = 6
+
+    def get_filename(self):
+        fext = "hex" if self.value != 6 else "bin"
+        return "firmware." + fext
 
     def get_download_path(self, variant):
-        return "https://tonuino.github.io/TonUINO-TNG/" + HW[self.value] + "_" + variant.get_download_str() + "/firmware.hex"
+        return "https://tonuino.github.io/TonUINO-TNG/" + HW[self.value] + "_" + variant.get_download_str() + "/" + self.get_filename()
 
 compatibility = [
 #    3   5   3x3 5f
@@ -51,7 +56,8 @@ compatibility = [
     [1,  1,  1,  1], #  EVERY     
     [1,  1,  1,  1], #  EVERY_4808
     [1,  1,  1,  0], #  AIO       
-    [1,  1,  1,  1]  #  AIO_PLUS  
+    [1,  1,  1,  1], #  AIO_PLUS  
+    [1,  1,  1,  1]  #  ESP32_Nano  
     ]
 
 def get_used_ports():
@@ -64,6 +70,8 @@ def get_used_ports():
     return used_ports
 
 def calculate_code_size(console, hex_file_path):
+    if hex_file_path.endswith(".bin"):
+        return os.path.getsize(hex_file_path)
     code_size = 0
     try:
         with open(hex_file_path, 'r') as file:
@@ -107,6 +115,9 @@ def upload(console, downlfilename, hwtype, port, process):
     elif hwtype == hw_type.AIO_PLUS:
         args = ["-patmega4809", "-carduino"  , "-P" + port, "-b115200","-D", "-Uflash:w:" + downlfilename + ":i"]
         max_code_size = 48640
+    elif hwtype == hw_type.ESP32_NANO:
+        args = ["--device", "0x2341:0x0070"  , "-D", downlfilename, "-Q"]
+        max_code_size = 3145728
     else:
         console.append("Oops")
         return
@@ -115,9 +126,10 @@ def upload(console, downlfilename, hwtype, port, process):
         console.append(f"Die Datei '{downlfilename}' (Code Größe {code_size}) ist zu groß für die HW. Die maximale Größe ist {max_code_size}.")
         return
     
-    console.append(resource_path("avrdude") + ' ' + ' '.join(args)) 
+    upl_tool = "avrdude" if hwtype != hw_type.ESP32_NANO else "dfu-util"
+    console.append(resource_path(upl_tool) + ' ' + ' '.join(args)) 
     console.append("\n#################################################################################\n")
-    process.start(resource_path("avrdude"), args) 
+    process.start(resource_path(upl_tool), args) 
 
 def download(console, downlfilename, hwtype, variant):
     context = ssl.create_default_context(cafile=certifi.where())
@@ -127,7 +139,7 @@ def download(console, downlfilename, hwtype, variant):
     console.append("downloaded " + hwtype.get_download_path(variant) + " to " + downlfilename)
    
 def download_upload(console, downldir, hwtype,variant, port, process):
-    downlfilename = os.path.join(downldir.name, "firmware.hex")
+    downlfilename = os.path.join(downldir.name, hwtype.get_filename())
     
     download(console, downlfilename, hwtype, variant)
     console.append("\n#################################################################################\n")
